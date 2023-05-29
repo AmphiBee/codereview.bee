@@ -1,4 +1,4 @@
-# codereview.gpt
+# codereview.bee 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/sturdy-dev/codereview.gpt/main/public/icons/icon_128.png">
@@ -25,13 +25,7 @@
 
 ## Overview
 
-This is a Chrome extension which reviews Pull Requests for you using [ChatGPT](https://chat.openai.com/).
-
-Here's an example output for [this](https://github.com/sturdy-dev/semantic-code-search/pull/17) Pull Request:
-
-https://user-images.githubusercontent.com/4030927/207372123-46d7ee8c-bd3e-4272-8ccb-4639f9f71458.mp4
-
-![example screenshot](https://raw.githubusercontent.com/sturdy-dev/codereview.gpt/main/docs/codereview_gpt_screenshot_1.png)
+This is a French adaptation of the codereview.gpt extension made by AmphiBee that can be found here : https://github.com/sturdy-dev/codereview.gpt/
 
 ## Usage
 
@@ -111,8 +105,8 @@ This is a list of permissions the extension uses with the respective reason.
 
 ## Credits
 
-This project is inspired by [clmnin/summarize.site](https://github.com/clmnin/summarize.site)
+Original codereview.gpt project is inspired by [clmnin/summarize.site](https://github.com/clmnin/summarize.site)
 
 ## License
 
-codereview.gpt is distributed under the [MIT](LICENSE.txt) license.
+codereview.bee is distributed under the [MIT](LICENSE.txt) license.

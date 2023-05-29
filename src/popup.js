@@ -64,7 +64,7 @@ async function callChatGPT(messages, callback, onDone) {
 
   const api = new ChatGPTAPI({
     apiKey: apiKey,
-    systemMessage: `You are a programming code change reviewer, provide feedback on the code changes given. Do not introduce yourselves.`
+    systemMessage: `Tu es un relecteur de code informatique, donne des conseils d'améliorations sur le code donné. Ne te présente pas et réponds en français`,
   })
 
   let res
@@ -83,7 +83,7 @@ async function callChatGPT(messages, callback, onDone) {
       // In progress
       else {
         options = {
-          onProgress: () => callback("Processing your code changes. Number of prompts left to send: " + iterations + ". Stay tuned..."),
+          onProgress: () => callback("Envoi du code... Nombre de prompts à envoyer: " + iterations + ". Merci de patienter..."),
         }
       }
 
@@ -116,23 +116,23 @@ async function reviewPR(diffPath, context, title) {
   let warning = '';
   let patchParts = [];
 
-  promptArray.push(`The change has the following title: ${title}.
+  promptArray.push(`Le changement a le titre suivant: ${title}.
 
-    Your task is:
-    - Review the code changes and provide feedback.
-    - If there are any bugs, highlight them.
-    - Provide details on missed use of best-practices.
-    - Does the code do what it says in the commit messages?
-    - Do not highlight minor issues and nitpicks.
-    - Use bullet points if you have multiple comments.
-    - Provide security recommendations if there are any.
+    Ta tâche:
+    - Fais une revue du code et donne une analyse
+    - S'il y a des bugs, mets les en valeur
+    - Provide details on missed use of best-practices. Donne des détails sur des oublis des meilleures pratiques
+    - Est-ce que le code fait ce qui est décrit dans les messages ?
+    - Ne donne pas d'informations sur les problèmes mineurs et pinailleries
+    - Utilise des listes à puces si tu as plusieurs commentaires à faire
+    - Donne des recommandations sur la sécurité si besoin
 
-    You are provided with the code changes (diffs) in a unidiff format.
-    Do not provide feedback yet. I will follow-up with a description of the change in a new message.`
+    Les changements (diffs) sont donnés au format unidiff.
+    Ne donne pas ta réponse pour le moment. Je vais ajouter une description des changements dans un autre message.`
   );
 
-  promptArray.push(`A description was given to help you assist in understand why these changes were made.
-    The description was provided in a markdown format. Do not provide feedback yet. I will follow-up with the code changes in diff format in a new message.
+  promptArray.push(`Une description a été donnée pour t'aider à comprendre pourquoi ces changements ont été effectués.
+    La description a été faite au format Markdown. Ne donne pas encore ta réponse. Je vais ajouter les changements de code dans un nouveau message.
 
     ${context}`);
 
@@ -176,12 +176,12 @@ async function reviewPR(diffPath, context, title) {
       patchPartArray.push(file.chunks.map(c => c.changes.map(t => t.content).join("\n")));
     }
     patchPartArray.push("```");
-    patchPartArray.push("\nDo not provide feedback yet. I will confirm once all code changes were submitted.");
+    patchPartArray.push("\nNe donne pas encore de réponse. Je vais confirmer quand tous les changements ont été envoyés.");
 
     var patchPart = patchPartArray.join("\n");
     if (patchPart.length >= 15384) {
       patchPart = patchPart.slice(0, 15384)
-      warning = 'Some parts of your patch were truncated as it was larger than 4096 tokens or 15384 characters. The review might not be as complete.'
+      warning = 'Certaines parties du patch ont été tronquées car elles dépassaient 4096 jetons ou 15384 caractères. La revue pourrait ne pas être cmomplète.'
     }
     patchParts.push(patchPart);
   });
@@ -190,7 +190,9 @@ async function reviewPR(diffPath, context, title) {
     promptArray.push(part);
   });
 
-  promptArray.push("All code changes have been provided. Please provide me with your code review based on all the changes, context & title provided");
+  promptArray.push("Toutes les modifications de code ont été fournies. Merci de fournir ta revue de code, basée sur toutes les modifications, le contexte et le titre fournit.");
+
+  console.log(promptArray)
 
   // Send our prompts to ChatGPT.
   callChatGPT(
@@ -220,9 +222,9 @@ async function run() {
   let title = tab.title
 
   // Simple verification if it would be a self-hosted GitLab instance.
-  // We verify if there is a meta tag present with the content "GitLab". 
+  // We verify if there is a meta tag present with the content "GitLab".
   let isGitLabResult = (await chrome.scripting.executeScript({
-    target:{tabId: tab.id, allFrames: true}, 
+    target:{tabId: tab.id, allFrames: true},
     func: () => { return document.querySelectorAll('meta[content="GitLab"]').length }
   }))[0];
 
@@ -239,10 +241,10 @@ async function run() {
     // The description of the author of the change
     // Fetch it by running a querySelector script specific to GitHub on the active tab
     const contextExternalResult = (await chrome.scripting.executeScript({
-      target:{tabId: tab.id, allFrames: true}, 
+      target:{tabId: tab.id, allFrames: true},
       func: () => { return document.querySelector('.markdown-body').textContent }
     }))[0];
-    
+
     if ("result" in contextExternalResult) {
       context = contextExternalResult.result;
     }
@@ -253,7 +255,7 @@ async function run() {
     // The description of the author of the change
     // Fetch it by running a querySelector script specific to GitLab on the active tab
     const contextExternalResult = (await chrome.scripting.executeScript({
-      target:{tabId: tab.id, allFrames: true}, 
+      target:{tabId: tab.id, allFrames: true},
       func: () => { return document.querySelector('.description textarea').getAttribute('data-value') }
     }))[0];
 
@@ -269,7 +271,7 @@ async function run() {
       error = 'Only GitHub or GitLab (SaaS & self-hosted) are supported.'
     }
   }
- 
+
   if (error != null) {
     document.getElementById('result').innerHTML = error
     inProgress(false, true, false);

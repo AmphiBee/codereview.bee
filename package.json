@@ -1,7 +1,7 @@
 {
-  "name": "codereview.gpt",
+  "name": "codereview.bee",
   "version": "0.2.0",
-  "description": "Reviews PRs so that you can pretend to work",
+  "description": "Use AI to review code and save bees instead",
   "private": true,
   "scripts": {
     "watch": "webpack --mode=development --watch --config config/webpack.config.js",

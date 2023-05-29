@@ -5,8 +5,12 @@
 
 # production
 /build
+build.crx
+build.pem
 
 # misc
 .DS_Store
 
 npm-debug.log*
+
+.idea/
